@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Ошибка сервера{% endblock %}
+
+{% block content %}
+
+<div style="text-align: center; padding: 4rem 2rem;">
+    <h1 style="font-size: 4rem; color: var(--accent); margin-bottom: 1rem;">
+        ⚠️ 500
+    </h1>
+    <h2 style="color: var(--primary); font-size: 2rem; margin-bottom: 1rem;">
+        Ошибка сервера
+    </h2>
+    <p style="color: var(--text-secondary); font-size: 1.2rem; margin-bottom: 2rem;">
+        {{ message }}
+    </p>
+    
+    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+        Что-то пошло не так на нашей стороне. Наша команда уже работает над исправлением проблемы.
+    </p>
+    
+    <a 
+        href="/" 
+        style="
+            display: inline-block;
+            background: var(--primary);
+            color: var(--dark-bg);
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        "
+        onmouseover="this.style.boxShadow='0 0 20px rgba(0, 255, 136, 0.6)'; this.style.transform='scale(1.05)'"
+        onmouseout="this.style.boxShadow='none'; this.style.transform='scale(1)'"
+    >
+        ← Вернуться на главную
+    </a>
+    
+    <div style="margin-top: 3rem; padding: 2rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; max-width: 600px; margin-left: auto; margin-right: auto; text-align: left;">
+        <h3 style="color: var(--secondary); margin-bottom: 1rem;">🔧 Что произошло?</h3>
+        <ul style="list-style: none;">
+            <li style="margin-bottom: 0.5rem;">
+                🔴 Неожиданная ошибка на сервере
+            </li>
+            <li style="margin-bottom: 0.5rem;">
+                📊 Проблема с базой данных
+            </li>
+            <li style="margin-bottom: 0.5rem;">
+                🔗 Ошибка при обработке запроса
+            </li>
+        </ul>
+        
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);">
+            Если проблема повторяется, пожалуйста, свяжитесь с нашей командой поддержки.
+        </p>
+    </div>
+</div>
+
+{% endblock %}

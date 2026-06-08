@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MediaPulse - Агрегатор новостей{% endblock %}</title>
+    
+    <style>
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ (Cyberpunk Dark Mode)                            */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        
+        :root {
+            --primary: #00ff88;      /* Neon Green */
+            --primary-dark: #00cc6a;
+            --secondary: #00d4ff;    /* Cyan */
+            --accent: #ff006e;       /* Hot Pink */
+            --dark-bg: #0a0e27;      /* Dark Blue-Black */
+            --card-bg: #1a1f3a;      /* Slightly lighter */
+            --border: #2a3f5f;       /* Muted border */
+            --text-primary: #e0e0e0; /* Light gray */
+            --text-secondary: #a0a0a0;
+            --shadow: 0 8px 32px rgba(0, 255, 136, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        body {
+            background-image: 
+                linear-gradient(135deg, rgba(0, 255, 136, 0.03) 0%, rgba(0, 212, 255, 0.03) 100%);
+        }
+        
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* HEADER / НАВИГАЦИЯ                                                           */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        
+        header {
+            background: linear-gradient(180deg, #1a1f3a 0%, #0a0e27 100%);
+            border-bottom: 2px solid var(--primary);
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+            transform: scale(1.05);
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .nav-items {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-items a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-items a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-items a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-items a:hover::after {
+            width: 100%;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+        
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* ОСНОВНОЙ КОНТЕНТ                                                             */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        
+        main {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            min-height: calc(100vh - 100px);
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* SIDEBAR (ФИЛЬТРЫ И СТАТИСТИКА)                                               */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .sidebar-widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .widget-title {
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .categories-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .category-btn {
+            padding: 0.75rem;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .category-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+        }
+        
+        .category-btn.active {
+            background: var(--primary);
+            color: var(--dark-bg);
+            border-color: var(--primary);
+        }
+        
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* ПОИСК                                                                        */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        
+        .search-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem;
+            background: var(--dark-bg);
+            border: 1px solid var(--primary);
+            color: var(--text-primary);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+        
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* КАРТОЧКИ НОВОСТЕЙ                                                            */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        
+        .articles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .article-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .article-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+        
+        .article-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 0;
+            flex: 1;
+        }
+        
+        .article-card:hover .article-title {
+            color: var(--secondary);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+        
+        .article-category {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        
+        .article-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .article-text {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        
+        .article-source {
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        .article-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .read-more {
+            display: inline-block;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .read-more:hover {
+            color: var(--secondary);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        .article-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* FOOTER                                                                       */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        
+        footer {
+            background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 100%);
+            border-top: 2px solid var(--primary);
+            padding: 2rem;
+            margin-top: 4rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: var(--secondary);
+        }
+        
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* УТИЛИТЫ                                                                      */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: var(--primary);
+        }
+        
+        .loading::after {
+            content: '';
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--primary);
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--dark-bg);
+            padding: 0.3rem 0.6rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-item {
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.3rem;
+        }
+        
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- ───────────────────────────────────────────────────────────────────────────── -->
+    <!-- HEADER / НАВИГАЦИЯ                                                             -->
+    <!-- ───────────────────────────────────────────────────────────────────────────── -->
+    
+    <header>
+        <nav>
+            <a href="/" class="logo">
+                MEDIA<span>PULSE</span>
+            </a>
+            <ul class="nav-items">
+                <li><a href="/">Главная</a></li>
+                <li><a href="#stats">Статистика</a></li>
+                <li><a href="#trending">Тренды</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+        </nav>
+    </header>
+    
+    <!-- ───────────────────────────────────────────────────────────────────────────── -->
+    <!-- ОСНОВНОЙ КОНТЕНТ                                                               -->
+    <!-- ───────────────────────────────────────────────────────────────────────────── -->
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- ───────────────────────────────────────────────────────────────────────────── -->
+    <!-- FOOTER                                                                         -->
+    <!-- ───────────────────────────────────────────────────────────────────────────── -->
+    
+    <footer>
+        <p>
+            📰 MediaPulse — Интеллектуальный агрегатор новостей 
+            <br>
+            Технологии: Flask, SQLite, Machine Learning (TF-IDF), APScheduler
+            <br>
+            © 2024 MediaPulse Team. Все права защищены.
+        </p>
+    </footer>
+    
+    <!-- ───────────────────────────────────────────────────────────────────────────── -->
+    <!-- JAVASCRIPT                                                                     -->
+    <!-- ───────────────────────────────────────────────────────────────────────────── -->
+    
+    <script>
+        // Переключение темы
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+        
+        // Плавный скролл
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
