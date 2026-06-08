@@ -1,0 +1,1 @@
+Интеграция для Fullstack Developer

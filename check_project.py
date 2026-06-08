@@ -88,7 +88,7 @@ def check_dependencies():
     required = [
         "flask",
         "feedparser",
-        "beautifulsoup4",
+        "bs4",
         "apscheduler",
         "sklearn",
         "pandas",
