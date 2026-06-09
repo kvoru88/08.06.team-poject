@@ -7,20 +7,38 @@
     
     <style>
         /* ─────────────────────────────────────────────────────────────────────────── */
-        /* ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ (Cyberpunk Dark Mode)                            */
+        /* ПЕРЕМЕННЫЕ (Dark Mode - Cyberpunk)                                           */
         /* ─────────────────────────────────────────────────────────────────────────── */
         
         :root {
-            --primary: #00ff88;      /* Neon Green */
+            /* Dark Mode Colors */
+            --primary: #00ff88;
             --primary-dark: #00cc6a;
-            --secondary: #00d4ff;    /* Cyan */
-            --accent: #ff006e;       /* Hot Pink */
-            --dark-bg: #0a0e27;      /* Dark Blue-Black */
-            --card-bg: #1a1f3a;      /* Slightly lighter */
-            --border: #2a3f5f;       /* Muted border */
-            --text-primary: #e0e0e0; /* Light gray */
+            --secondary: #00d4ff;
+            --accent: #ff006e;
+            --dark-bg: #0a0e27;
+            --card-bg: #1a1f3a;
+            --border: #2a3f5f;
+            --text-primary: #e0e0e0;
             --text-secondary: #a0a0a0;
             --shadow: 0 8px 32px rgba(0, 255, 136, 0.1);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* ПЕРЕМЕННЫЕ (Light Mode)                                                      */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+
+        body.light-mode {
+            --primary: #0066cc;
+            --primary-dark: #0052a3;
+            --secondary: #0099ff;
+            --accent: #ff1493;
+            --dark-bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --border: #e0e0e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --shadow: 0 8px 32px rgba(0, 102, 204, 0.1);
         }
         
         * {
@@ -36,11 +54,17 @@
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         body {
             background-image: 
                 linear-gradient(135deg, rgba(0, 255, 136, 0.03) 0%, rgba(0, 212, 255, 0.03) 100%);
+        }
+
+        body.light-mode {
+            background-image: 
+                linear-gradient(135deg, rgba(0, 102, 204, 0.03) 0%, rgba(0, 153, 255, 0.03) 100%);
         }
         
         /* ─────────────────────────────────────────────────────────────────────────── */
@@ -55,6 +79,12 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode header {
+            background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+            border-bottom: 2px solid var(--primary);
         }
         
         nav {
@@ -73,10 +103,18 @@
             text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
             transition: all 0.3s ease;
         }
+
+        body.light-mode .logo {
+            text-shadow: 0 0 10px rgba(0, 102, 204, 0.3);
+        }
         
         .logo:hover {
             text-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
             transform: scale(1.05);
+        }
+
+        body.light-mode .logo:hover {
+            text-shadow: 0 0 20px rgba(0, 102, 204, 0.6);
         }
         
         .logo span {
@@ -94,6 +132,7 @@
             text-decoration: none;
             transition: all 0.3s ease;
             position: relative;
+            cursor: pointer;
         }
         
         .nav-items a:hover {
@@ -114,6 +153,11 @@
         .nav-items a:hover::after {
             width: 100%;
         }
+
+        .nav-items a.active::after {
+            width: 100%;
+            background: var(--secondary);
+        }
         
         .theme-toggle {
             background: none;
@@ -124,12 +168,17 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 0.9rem;
+            font-weight: bold;
         }
         
         .theme-toggle:hover {
             background: var(--primary);
             color: var(--dark-bg);
             box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        body.light-mode .theme-toggle:hover {
+            color: #ffffff;
         }
         
         /* ─────────────────────────────────────────────────────────────────────────── */
@@ -171,6 +220,7 @@
             border-radius: 10px;
             padding: 1.5rem;
             box-shadow: var(--shadow);
+            transition: all 0.3s ease;
         }
         
         .widget-title {
@@ -210,6 +260,10 @@
             color: var(--dark-bg);
             border-color: var(--primary);
         }
+
+        body.light-mode .category-btn.active {
+            color: #ffffff;
+        }
         
         /* ─────────────────────────────────────────────────────────────────────────── */
         /* ПОИСК                                                                        */
@@ -244,6 +298,45 @@
             border-color: var(--primary);
             box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
         }
+
+        body.light-mode .search-input:focus {
+            box-shadow: 0 0 15px rgba(0, 102, 204, 0.3);
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+        }
+
+        .search-suggestions.active {
+            display: block;
+        }
+
+        .search-suggestion-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .search-suggestion-item:hover {
+            background: var(--primary);
+            color: var(--dark-bg);
+        }
+
+        body.light-mode .search-suggestion-item:hover {
+            color: #ffffff;
+        }
         
         /* ─────────────────────────────────────────────────────────────────────────── */
         /* КАРТОЧКИ НОВОСТЕЙ                                                            */
@@ -262,22 +355,25 @@
             padding: 1.5rem;
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
-            overflow: hidden;
             cursor: pointer;
         }
         
         .article-card:hover {
             border-color: var(--primary);
-            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.15);
-            transform: translateY(-4px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            transform: translateY(-5px);
+        }
+
+        body.light-mode .article-card:hover {
+            box-shadow: 0 0 20px rgba(0, 102, 204, 0.2);
         }
         
         .article-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 1rem;
             gap: 1rem;
+            margin-bottom: 1rem;
         }
         
         .article-title {
@@ -368,6 +464,11 @@
             text-align: center;
             color: var(--text-secondary);
             font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        body.light-mode footer {
+            background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%);
         }
         
         footer a {
@@ -428,6 +529,10 @@
             font-weight: bold;
             margin-left: 0.5rem;
         }
+
+        body.light-mode .badge {
+            color: #ffffff;
+        }
         
         .stats-grid {
             display: grid;
@@ -441,6 +546,12 @@
             padding: 1rem;
             border-radius: 5px;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
         }
         
         .stat-number {
@@ -453,6 +564,37 @@
             font-size: 0.85rem;
             color: var(--text-secondary);
             margin-top: 0.3rem;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────── */
+        /* ТАБЛИЦЫ ДАННЫХ                                                               */
+        /* ─────────────────────────────────────────────────────────────────────────── */
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th {
+            background: var(--primary);
+            color: var(--dark-bg);
+            padding: 1rem;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        body.light-mode .data-table th {
+            color: #ffffff;
+        }
+
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tr:hover {
+            background: var(--card-bg);
         }
         
     </style>
@@ -470,11 +612,11 @@
                 MEDIA<span>PULSE</span>
             </a>
             <ul class="nav-items">
-                <li><a href="/">Главная</a></li>
-                <li><a href="#stats">Статистика</a></li>
-                <li><a href="#trending">Тренды</a></li>
+                <li><a href="#home" onclick="switchTab(event, 'home')" class="nav-link active">Главная</a></li>
+                <li><a href="#stats" onclick="switchTab(event, 'stats')" class="nav-link">Статистика</a></li>
+                <li><a href="#trending" onclick="switchTab(event, 'trending')" class="nav-link">Тренды</a></li>
             </ul>
-            <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙 Light Mode</button>
         </nav>
     </header>
     
@@ -505,16 +647,60 @@
     <!-- ───────────────────────────────────────────────────────────────────────────── -->
     
     <script>
+        // Загрузка сохраненной темы из localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('themeBtn').textContent = '☀️ Dark Mode';
+            }
+        });
+
         // Переключение темы
         function toggleTheme() {
-            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.toggle('light-mode');
+            const themeBtn = document.getElementById('themeBtn');
+            
+            if (isLight) {
+                themeBtn.textContent = '☀️ Dark Mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeBtn.textContent = '🌙 Light Mode';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Переключение табов
+        function switchTab(event, tabName) {
+            event.preventDefault();
+            
+            // Обновляем активный nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Показываем нужную секцию
+            const sections = document.querySelectorAll('[data-section]');
+            sections.forEach(section => {
+                section.style.display = section.getAttribute('data-section') === tabName ? 'block' : 'none';
+            });
+
+            // Скролл к секции
+            const section = document.querySelector(`[data-section="${tabName}"]`);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
         }
         
         // Плавный скролл
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href === '#' || !document.querySelector(href)) return;
+                
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const target = document.querySelector(href);
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth' });
                 }
